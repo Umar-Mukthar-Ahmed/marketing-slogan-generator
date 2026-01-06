@@ -2,7 +2,7 @@
 Marketing Slogan Generator - Main Application
 ==============================================
 This module demonstrates how reusable prompt templates from the prompt library
-connect to the OpenAI API to generate marketing content.
+connect to the Azure OpenAI API to generate marketing content.
 
 Key Concepts Demonstrated:
 1. Variable injection into prompt templates
@@ -13,7 +13,7 @@ Key Concepts Demonstrated:
 
 import os
 from pathlib import Path
-from openai import OpenAI
+from openai import AzureOpenAI
 from dotenv import load_dotenv
 from prompt_library import (
     professional_slogan_prompt,
@@ -27,9 +27,9 @@ env_path = Path(__file__).parent.parent / '.env'
 load_dotenv(dotenv_path=env_path)
 
 
-def generate_slogan(prompt: str, model: str = "gpt-3.5-turbo") -> str:
+def generate_slogan(prompt: str) -> str:
     """
-    Send a prompt to OpenAI's Chat Completion API and retrieve the response.
+    Send a prompt to Azure OpenAI's Chat Completion API and retrieve the response.
 
     This function demonstrates the critical connection between prompt engineering
     and API implementation. The carefully crafted prompt from our library is
@@ -37,7 +37,6 @@ def generate_slogan(prompt: str, model: str = "gpt-3.5-turbo") -> str:
 
     Args:
         prompt: The complete prompt string from our prompt library
-        model: OpenAI model to use (default: gpt-3.5-turbo)
 
     Returns:
         Generated slogan text from the API
@@ -46,20 +45,27 @@ def generate_slogan(prompt: str, model: str = "gpt-3.5-turbo") -> str:
     The quality of the output directly depends on the prompt structure
     defined in our prompt library.
     """
-    # Get API key from environment
-    api_key = os.getenv("OPENAI_API_KEY")
+    # Get configuration from environment
+    endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
+    api_key = os.getenv("AZURE_OPENAI_KEY")
+    deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT")
+    api_version = os.getenv("AZURE_OPENAI_API_VERSION")
 
-    # Check if API key is loaded
-    if not api_key:
-        return "ERROR: OPENAI_API_KEY not found. Please check your .env file is in the project root."
+    # Check if all required variables are loaded
+    if not all([endpoint, api_key, deployment, api_version]):
+        return "ERROR: Missing Azure OpenAI configuration. Please check your .env file."
 
-    # Initialize OpenAI client
-    client = OpenAI(api_key=api_key)
+    # Initialize Azure OpenAI client
+    client = AzureOpenAI(
+        api_version=api_version,
+        azure_endpoint=endpoint,
+        api_key=api_key,
+    )
 
     try:
         # Make API call with our engineered prompt
         response = client.chat.completions.create(
-            model=model,
+            model=deployment,
             messages=[
                 {
                     "role": "system",
@@ -70,9 +76,7 @@ def generate_slogan(prompt: str, model: str = "gpt-3.5-turbo") -> str:
                     "content": prompt  # Our engineered prompt is injected here
                 }
             ],
-            temperature=0.8,  # Slightly creative but controlled
-            max_tokens=300,   # Sufficient for 3 slogans and explanation
-            top_p=0.9
+            max_completion_tokens=16384
         )
 
         # Extract and return the generated content
@@ -120,7 +124,7 @@ def demonstrate_prompt_usage():
     print("\nGenerated Prompt (first 300 characters):")
     print(f"{professional_prompt[:300]}...\n")
 
-    print("Sending to OpenAI API...")
+    print("Sending to Azure OpenAI API...")
     result_1 = generate_slogan(professional_prompt)
     print("\nAPI Response:")
     print(result_1)
@@ -130,6 +134,7 @@ def demonstrate_prompt_usage():
     print("=" * 70)
     print("DEMONSTRATION 2: CREATIVE APPROACH")
     print("=" * 70)
+    print()
 
     creative_prompt = creative_slogan_prompt(
         product_name=product_name,
@@ -137,12 +142,7 @@ def demonstrate_prompt_usage():
         tone="bold"  # Different tone for variety
     )
 
-    print("\nGenerated Prompt (first 300 characters):")
-    print(f"{creative_prompt[:300]}...\n")
-
-    print("Sending to OpenAI API...")
     result_2 = generate_slogan(creative_prompt)
-    print("\nAPI Response:")
     print(result_2)
     print()
 
@@ -150,6 +150,7 @@ def demonstrate_prompt_usage():
     print("=" * 70)
     print("DEMONSTRATION 3: AUDIENCE-FOCUSED APPROACH")
     print("=" * 70)
+    print()
 
     audience_prompt = audience_focused_prompt(
         product_name=product_name,
@@ -157,12 +158,7 @@ def demonstrate_prompt_usage():
         tone=tone
     )
 
-    print("\nGenerated Prompt (first 300 characters):")
-    print(f"{audience_prompt[:300]}...\n")
-
-    print("Sending to OpenAI API...")
     result_3 = generate_slogan(audience_prompt)
-    print("\nAPI Response:")
     print(result_3)
     print()
 
@@ -218,19 +214,38 @@ def interactive_mode():
     print()
 
 
+def main_menu():
+    """
+    Main menu for the Marketing Slogan Generator application.
+    """
+    while True:
+        print("\n" + "=" * 70)
+        print("MARKETING SLOGAN GENERATOR - MAIN MENU")
+        print("=" * 70)
+        print("\n1. Run Demo (EcoBottle Pro example)")
+        print("2. Interactive Mode (Enter your own product)")
+        print("3. Exit")
+        print()
+
+        choice = input("Select an option (1-3): ").strip()
+
+        if choice == "1":
+            print()
+            demonstrate_prompt_usage()
+        elif choice == "2":
+            print()
+            interactive_mode()
+        elif choice == "3":
+            print("\n" + "=" * 70)
+            print("Thank you for using Marketing Slogan Generator!")
+            print("=" * 70)
+            break
+        else:
+            print("\nInvalid choice. Please select 1, 2, or 3.")
+
+
 if __name__ == "__main__":
     """
-    Main execution block - demonstrates both automated and interactive modes.
-    
-    Comment/uncomment the desired mode for testing.
+    Main execution block - runs the menu-driven interface.
     """
-
-    # Run automated demonstration
-    demonstrate_prompt_usage()
-
-    # Uncomment below for interactive mode
-    # interactive_mode()
-
-    print("=" * 70)
-    print("ASSIGNMENT COMPLETE")
-    print("=" * 70)
+    main_menu()
