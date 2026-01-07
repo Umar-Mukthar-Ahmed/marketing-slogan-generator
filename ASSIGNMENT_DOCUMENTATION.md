@@ -1,459 +1,306 @@
-# WEEK 3 ASSIGNMENT: Prompt Library & Marketing Slogan Generator
+# Marketing Slogan Generator
 
-## Complete Solution Documentation
-
-**Author:** [Your Name]  
-**Course:** AI Engineering  
-**Assignment:** Week 3 - Prompt Engineering & OpenAI API Integration
+A professional AI-powered tool that generates creative marketing slogans using Azure OpenAI and reusable prompt templates.
 
 ---
 
-## Executive Summary
-
-This assignment demonstrates advanced prompt engineering techniques through a production-ready Marketing Slogan Generator. The solution showcases:
-
-- **Reusable prompt templates** following industry best practices
-- **Clean code architecture** with separation of concerns
-- **Dynamic variable injection** for maximum flexibility
-- **Professional OpenAI API integration** with error handling
-- **Real-world applicability** across different products and audiences
-
----
-
-## Table of Contents
-
-1. [Project Structure](#project-structure)
-2. [Prompt Library Design](#prompt-library-design)
-3. [Variable Injection Mechanism](#variable-injection-mechanism)
-4. [OpenAI API Integration](#openai-api-integration)
-5. [Usage Instructions](#usage-instructions)
-6. [Key Learning Outcomes](#key-learning-outcomes)
-
----
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 marketing-slogan-generator/
 │
 ├── src/
 │   ├── prompt_library.py      # Reusable prompt templates
-│   └── main.py                # Application logic and API integration
+│   └── main.py                # Main application with menu
 │
-├── requirements.txt           # Project dependencies
-└── ASSIGNMENT_DOCUMENTATION.md
+├── .env                       # Azure OpenAI credentials
+├── requirements.txt           # Python dependencies
+└── README.md                  # This file
 ```
-
-### File Responsibilities
-
-**`prompt_library.py`**
-- Contains all prompt templates as Python functions
-- Enforces Role-Task-Constraints pattern
-- Provides reusability through parameter injection
-- Includes comprehensive documentation
-
-**`main.py`**
-- Demonstrates prompt usage with real examples
-- Handles OpenAI API communication
-- Shows both automated and interactive modes
-- Implements error handling and professional output formatting
 
 ---
 
-## Prompt Library Design
+## 🚀 Quick Start
 
-### Core Design Principles
+### 1. Install Dependencies
 
-Each prompt template follows the **Role-Task-Constraints (RTC)** pattern, which is recognized as a best practice in prompt engineering:
+```bash
+pip install -r requirements.txt
+```
 
-#### 1. **Role Definition**
-Each prompt explicitly defines who the AI should act as:
-- "You are an expert marketing copywriter with 10+ years of experience"
-- "You are a creative director at a leading advertising agency"
-- "You are a consumer insights specialist"
+### 2. Configure Azure OpenAI
 
-**Why this matters:** Role definition provides context and expertise framing that improves output quality and consistency.
+Create a `.env` file in the project root:
 
-#### 2. **Task Specification**
-Clear, unambiguous instructions on what to produce:
-- "Create 3 compelling marketing slogans"
-- "Develop 3 innovative brand messages"
-- "Craft 3 audience-focused slogans"
+```env
+AZURE_OPENAI_ENDPOINT=https://your-endpoint.cognitiveservices.azure.com/
+AZURE_OPENAI_KEY=your-actual-api-key
+AZURE_OPENAI_DEPLOYMENT=gpt-5.2-chat
+AZURE_OPENAI_API_VERSION=2024-12-01-preview
+```
 
-**Why this matters:** Explicit task definition reduces ambiguity and ensures the AI understands exactly what is expected.
+### 3. Run the Application
 
-#### 3. **Constraints and Guidelines**
-Specific boundaries that ensure quality and appropriateness:
-- Word limits (3-8 words)
-- Tone requirements (professional, bold, friendly)
-- Ethical boundaries (no false claims)
-- Format requirements (numbered list with explanations)
-
-**Why this matters:** Constraints prevent generic or inappropriate responses and ensure outputs meet business requirements.
+```bash
+python src/main.py
+```
 
 ---
 
-### Three Prompt Templates Explained
+## 🎯 Features
 
-#### Template 1: Professional Slogan Prompt
+### Menu Options
 
-```python
-def professional_slogan_prompt(product_name, target_audience, tone)
-```
+When you run the program, you'll see:
 
-**Purpose:** Generate strategic, polished slogans suitable for corporate marketing campaigns.
+1. **Run Demo** - See example slogans for "EcoBottle Pro"
+2. **Interactive Mode** - Generate slogans for your own product
+3. **Exit** - Close the application
 
-**Key Features:**
-- Emphasizes brand strategy and consumer psychology
-- Strict quality controls (no clichés, no false claims)
-- Focus on customer benefits over features
-- Professional tone maintenance
+### Three Slogan Styles
 
-**Reusability Factor:** Works for any B2B or B2C product by injecting product_name and target_audience variables.
+1. **Professional Approach**
+   - Strategic and polished
+   - Best for: Enterprise products, professional services
 
-**Example Use Case:** Enterprise software, professional services, healthcare products
+2. **Creative Approach**
+   - Bold and innovative
+   - Best for: Startups, lifestyle brands, tech products
 
----
-
-#### Template 2: Creative Slogan Prompt
-
-```python
-def creative_slogan_prompt(product_name, target_audience, tone)
-```
-
-**Purpose:** Generate bold, attention-grabbing slogans for disruptive or innovative brands.
-
-**Key Features:**
-- Encourages creative language and wordplay
-- Three distinct creative approaches (aspiration, transformation, uniqueness)
-- Maintains professional boundaries while allowing artistic freedom
-- Bold and confident voice
-
-**Reusability Factor:** The creative framework adapts to any industry while respecting tone boundaries through parameter injection.
-
-**Example Use Case:** Startups, lifestyle brands, consumer electronics, fashion
+3. **Audience-Focused Approach**
+   - Empathetic and relatable
+   - Best for: Non-profits, health & wellness, education
 
 ---
 
-#### Template 3: Audience-Focused Prompt
+## 💡 How It Works
+
+### 1. Prompt Templates (`prompt_library.py`)
+
+Three reusable functions that create structured prompts:
 
 ```python
-def audience_focused_prompt(product_name, target_audience, tone)
+professional_slogan_prompt(product_name, target_audience, tone)
+creative_slogan_prompt(product_name, target_audience, tone)
+audience_focused_prompt(product_name, target_audience, tone)
 ```
 
-**Purpose:** Generate empathetic slogans that speak directly to customer needs and pain points.
+Each template follows the **Role-Task-Constraints** pattern:
+- **Role**: Who the AI should act as (marketing expert, creative director, etc.)
+- **Task**: What to create (3 compelling slogans)
+- **Constraints**: Requirements (word limits, tone, no false claims)
 
-**Key Features:**
-- Consumer psychology emphasis
-- Audience-specific language and references
-- Authenticity over hype
-- Trust-building through relatability
+### 2. Variable Injection
 
-**Reusability Factor:** The audience-first methodology dynamically adapts by incorporating specific target_audience characteristics in multiple places within the prompt.
-
-**Example Use Case:** Non-profits, educational services, health & wellness, community-focused brands
-
----
-
-## Variable Injection Mechanism
-
-### How Variable Injection Works
-
-All three prompt templates accept three parameters:
-- `product_name` (str): The product or service being marketed
-- `target_audience` (str): The intended customer demographic
-- `tone` (str): Desired communication style
-
-These variables are injected into the prompt using Python f-strings:
+Variables are dynamically inserted into prompts:
 
 ```python
-prompt = f"""You are an expert marketing copywriter...
-
-Product: {product_name}
-Target Audience: {target_audience}
-Desired Tone: {tone}
-
-Requirements and Constraints:
-1. Maintain a {tone} tone throughout
-2. Focus on needs of {target_audience}
-...
-"""
-```
-
-### Why This Approach is Powerful
-
-1. **Single Template, Infinite Use Cases**
-   - Same prompt template works for "EcoBottle Pro" targeting "millennials" and "Enterprise CRM" targeting "Fortune 500 CTOs"
-
-2. **Consistency Across Campaigns**
-   - All slogans follow the same quality standards regardless of input variables
-
-3. **Easy Maintenance**
-   - Update one template, all uses benefit from improvements
-
-4. **Type Safety and Documentation**
-   - Function parameters provide clear interface for users
-   - Type hints improve code reliability
-
-### Example Variable Injection
-
-```python
-# Input variables
-product = "SmartWatch Elite"
-audience = "fitness enthusiasts aged 25-40"
+product_name = "SmartWatch Elite"
+target_audience = "fitness enthusiasts aged 25-40"
 tone = "bold"
 
-# Variables are injected into template
-prompt = professional_slogan_prompt(product, audience, tone)
-
-# Result: A complete prompt with all variables seamlessly integrated
-# The prompt maintains its structure while adapting to specific needs
+prompt = professional_slogan_prompt(product_name, target_audience, tone)
 ```
 
----
+The same template works for ANY product by changing these variables!
 
-## OpenAI API Integration
+### 3. Azure OpenAI Integration (`main.py`)
 
-### Connection Between Prompt and API
-
-The `generate_slogan()` function demonstrates how engineered prompts connect to the OpenAI API:
+The `generate_slogan()` function sends prompts to Azure OpenAI:
 
 ```python
-def generate_slogan(prompt: str, model: str = "gpt-4") -> str:
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+def generate_slogan(prompt: str) -> str:
+    client = AzureOpenAI(
+        api_version=api_version,
+        azure_endpoint=endpoint,
+        api_key=api_key
+    )
     
     response = client.chat.completions.create(
-        model=model,
+        model=deployment,
         messages=[
-            {
-                "role": "system",
-                "content": "You are a professional marketing expert..."
-            },
-            {
-                "role": "user",
-                "content": prompt  # Engineered prompt injected here
-            }
+            {"role": "system", "content": "You are a professional marketing expert..."},
+            {"role": "user", "content": prompt}
         ],
-        temperature=0.8,
-        max_tokens=300,
-        top_p=0.9
+        max_completion_tokens=16384
     )
     
     return response.choices[0].message.content
 ```
 
-### Key Integration Points
-
-#### 1. **System Message vs User Message**
-- **System message:** Sets the overall behavior and expertise level
-- **User message:** Contains our engineered prompt with specific task details
-- This separation allows the prompt to focus on task specifics while the system message handles general behavior
-
-#### 2. **API Parameters Explained**
-
-**`model="gpt-4"`**
-- Uses GPT-4 for highest quality outputs
-- Can be changed to "gpt-3.5-turbo" for cost optimization
-
-**`temperature=0.8`**
-- Allows creativity while maintaining coherence
-- 0.0 = deterministic, 1.0 = maximum creativity
-- 0.8 is ideal for creative marketing content
-
-**`max_tokens=300`**
-- Sufficient for 3 slogans plus brief explanation
-- Prevents unnecessarily long responses
-- Optimizes API costs
-
-**`top_p=0.9`**
-- Nucleus sampling for quality control
-- Ensures responses stay relevant and focused
-
-#### 3. **Error Handling**
-The try-except block ensures graceful failure:
-- API key issues are caught
-- Network errors don't crash the application
-- Users receive meaningful error messages
-
 ---
 
-## Usage Instructions
+## 📝 Example Usage
 
-### Prerequisites
+### Demo Mode Output
 
-```bash
-pip install openai
 ```
+======================================================================
+MARKETING SLOGAN GENERATOR
+======================================================================
 
-Set environment variable:
-```bash
-export OPENAI_API_KEY='your-api-key-here'
+INPUT VARIABLES:
+  Product: EcoBottle Pro
+  Target Audience: environmentally conscious millennials
+  Tone: friendly
+
+======================================================================
+PROFESSIONAL APPROACH
+======================================================================
+
+Slogan 1: Drink Clean, Live Green
+Slogan 2: Your Daily Dose of Sustainability
+Slogan 3: Eco-Friendly Hydration, Simplified
+
+Brief Explanation: These slogans emphasize environmental benefits while 
+maintaining an approachable, friendly tone that resonates with millennials.
 ```
-
-### Running the Demonstration
-
-```bash
-python main.py
-```
-
-This executes the automated demonstration showing:
-1. Professional approach with "EcoBottle Pro"
-2. Creative approach with bold tone
-3. Audience-focused approach with friendly tone
 
 ### Interactive Mode
 
-To enable interactive input, modify `main.py`:
+```
+Enter product name: SmartWatch Elite
+Enter target audience: fitness enthusiasts aged 25-40
+
+Available tones: professional, friendly, bold, playful
+Enter desired tone: bold
+
+Available prompt styles:
+  1. Professional (strategic and polished)
+  2. Creative (bold and innovative)
+  3. Audience-Focused (empathetic and relatable)
+
+Select prompt style (1-3): 2
+
+======================================================================
+CREATIVE APPROACH
+======================================================================
+
+[Generated slogans appear here]
+```
+
+---
+
+## 🎓 Key Concepts
+
+### Why Reusable Prompts Matter
+
+✅ **Consistency** - Same quality standards for all products  
+✅ **Efficiency** - Write once, use everywhere  
+✅ **Scalability** - Handle multiple products easily  
+✅ **Maintainability** - Update one template, improve all outputs
+
+### Role-Task-Constraints Pattern
+
+Every prompt includes:
+
+1. **Role**: "You are an expert marketing copywriter..."
+   - Sets the AI's expertise and perspective
+
+2. **Task**: "Create 3 compelling marketing slogans..."
+   - Clear instructions on what to produce
+
+3. **Constraints**: "Each slogan must be 3-8 words..."
+   - Boundaries that ensure quality and appropriateness
+
+---
+
+## 🔧 Customization
+
+### Adding New Prompt Styles
+
+Edit `prompt_library.py` and add a new function:
 
 ```python
-if __name__ == "__main__":
-    # Comment out demonstration
-    # demonstrate_prompt_usage()
+def your_new_prompt(product_name: str, target_audience: str, tone: str) -> str:
+    prompt = f"""You are a [role]...
     
-    # Enable interactive mode
-    interactive_mode()
+    Product: {product_name}
+    Target Audience: {target_audience}
+    Desired Tone: {tone}
+    
+    Requirements:
+    1. [Your constraint]
+    2. [Your constraint]
+    ...
+    """
+    return prompt
 ```
 
-Then run:
-```bash
-python main.py
+Then import and use it in `main.py`.
+
+### Changing API Parameters
+
+In `main.py`, modify the `generate_slogan()` function:
+
+```python
+response = client.chat.completions.create(
+    model=deployment,
+    messages=[...],
+    max_completion_tokens=16384  # Adjust as needed
+)
 ```
 
-You'll be prompted to enter:
-- Product name
-- Target audience
-- Tone preference
-- Prompt style choice
+---
+
+## 📦 Dependencies
+
+- `openai>=1.0.0` - Azure OpenAI Python SDK
+- `python-dotenv>=1.0.0` - Environment variable management
 
 ---
 
-## Key Learning Outcomes
+## 🛠️ Troubleshooting
 
-### 1. Prompt Engineering Principles
+### Error: "Missing Azure OpenAI configuration"
+- Check that your `.env` file exists in the project root
+- Verify all four variables are set correctly
 
-**Demonstrated Skills:**
-- Role-Task-Constraints pattern implementation
-- Clear and unambiguous instruction writing
-- Constraint specification for quality control
-- Reusable template design
+### Error: "Unsupported value: temperature"
+- This is already fixed - the code uses only supported parameters
 
-**Why It Matters:** Well-engineered prompts produce consistent, high-quality outputs that meet business requirements without constant manual intervention.
-
----
-
-### 2. Variable Injection and Reusability
-
-**Demonstrated Skills:**
-- Dynamic content generation using parameters
-- Template abstraction and generalization
-- Maintaining consistency across use cases
-
-**Why It Matters:** Reusable templates scale across entire organizations, saving time and ensuring brand consistency.
+### No output or slow response
+- Check your internet connection
+- Verify your Azure OpenAI endpoint is active
+- Ensure you have sufficient API quota
 
 ---
 
-### 3. Clean Code Architecture
+## 📚 Learning Outcomes
 
-**Demonstrated Skills:**
-- Separation of concerns (prompt logic vs API logic)
-- Function-based design for maintainability
-- Comprehensive documentation
-- Professional error handling
+This project demonstrates:
 
-**Why It Matters:** Production systems require maintainable, scalable code that multiple developers can work on.
-
----
-
-### 4. API Integration Best Practices
-
-**Demonstrated Skills:**
-- Proper client initialization
-- Message role understanding (system vs user)
-- Parameter tuning for specific use cases
-- Error handling and recovery
-
-**Why It Matters:** Robust API integration ensures reliability in production environments where failures have real business impact.
+1. **Prompt Engineering** - Creating effective, reusable prompts
+2. **Variable Injection** - Dynamic content generation
+3. **API Integration** - Professional Azure OpenAI usage
+4. **Clean Code** - Separation of concerns and maintainability
+5. **User Experience** - Menu-driven interface design
 
 ---
 
-## Prompt Engineering Insights
+## 🎯 Next Steps
 
-### Why These Prompts Are Reusable
+Potential enhancements:
 
-1. **Generic Structure with Specific Injection Points**
-   - The framework remains constant
-   - Only product-specific details change via variables
-
-2. **No Hardcoded Assumptions**
-   - Templates don't assume industry, company size, or market
-   - Work equally well for tech products, consumer goods, services
-
-3. **Scalable Constraints**
-   - Word limits and tone requirements apply universally
-   - Quality standards remain consistent
-
-### How Role-Task-Constraints Are Enforced
-
-1. **Role:** First paragraph of each prompt
-   - Sets expertise level and perspective
-   - Primes the model for appropriate output style
-
-2. **Task:** Clearly stated in second paragraph
-   - Specific deliverable count (3 slogans)
-   - Format requirements explicitly stated
-
-3. **Constraints:** Numbered list format
-   - Easy to scan and verify compliance
-   - Specific, measurable requirements
-   - Ethical guidelines included
-
-### Connection to OpenAI API
-
-The engineered prompt is the bridge between human intent and AI execution:
-
-```
-Human Intent → Engineered Prompt → API Call → AI Processing → Quality Output
-```
-
-**Quality Input = Quality Output:** The sophistication of the prompt directly determines output quality. A well-engineered prompt reduces the need for multiple API calls or manual refinement.
+- Save generated slogans to a file
+- Compare multiple slogan variations side-by-side
+- Add more tone options (playful, serious, humorous)
+- Batch process multiple products from a CSV file
+- Add slogan rating/feedback system
 
 ---
 
-## Conclusion
+## 📄 License
 
-This assignment demonstrates professional-grade prompt engineering integrated with OpenAI's API. The solution is:
-
-✅ **Reusable** - Templates work across industries and use cases  
-✅ **Maintainable** - Clean code structure enables easy updates  
-✅ **Scalable** - Can handle high volumes through batch processing  
-✅ **Professional** - Ready for production deployment  
-✅ **Educational** - Clear documentation teaches core concepts
-
-The Marketing Slogan Generator serves as both a functional tool and a reference implementation for prompt engineering best practices.
+This project is for educational purposes.
 
 ---
 
-## Additional Notes
+## 👤 Author
 
-### Extending This Solution
-
-This foundation can be extended to:
-- A/B testing frameworks for comparing prompt variations
-- Multi-language support by injecting language parameters
-- Integration with content management systems
-- Batch processing for large product catalogs
-- Analytics dashboards tracking slogan performance
-
-### Assignment Success Criteria Met
-
-✅ 2-3 reusable prompt templates created  
-✅ Clear role, task, and constraints in each prompt  
-✅ Dynamic variable injection demonstrated  
-✅ OpenAI API integration shown  
-✅ Professional code structure  
-✅ Comprehensive explanations provided  
-✅ Ready for submission without modification
+Umar Mukthar  
+AI Engineering Course - Week 3 Assignment
 
 ---
 
-**End of Assignment Documentation**
+**Made with ❤️ using Azure OpenAI and Python**
